@@ -1,0 +1,11 @@
+handler:
+  version: 1.0
+  css:
+    layout:
+      css/pmn.css: {}
+  js:
+    js/pmn-handler.js: { }
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/drupalSettings

@@ -1,0 +1,22 @@
+{#
+/**
+ * Template for a notification message.
+ */
+#}
+<a class="pmn-notification" href="{{ url }}">
+
+    {% if image %}
+        <div class="pmn-notification__image">
+            <img src="{{ image }}" />
+        </div>
+    {% endif %}
+
+    <strong class="pmn-notification__title">
+        {{ title }}
+    </strong>
+
+    <div class="pmn-notification__body">
+        {{ snippet }}
+    </div>
+
+</a>

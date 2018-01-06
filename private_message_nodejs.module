@@ -1,0 +1,156 @@
+<?php
+
+/**
+ * @file
+ * Private message NodeJS.
+ */
+
+use Drupal\Core\Url;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\image\Entity\ImageStyle;
+use Drupal\Component\Utility\Unicode;
+
+/**
+ * Implements hook_nodejs_handlers_info().
+ */
+function private_message_nodejs_nodejs_handlers_info() {
+  return ['private_message_nodejs/handler'];
+}
+
+/**
+ * Implements hook_entity_update().
+ */
+function private_message_nodejs_entity_update(EntityInterface $entity) {
+  if ($entity->getEntityTypeId() == 'private_message_thread') {
+    foreach ($entity->getMembers() as $member) {
+      private_message_nodejs_thread_updated_notify($member->id(), $entity);
+    }
+  }
+}
+
+/**
+ * Notify a user of an updated thread.
+ *
+ * @param int $uid
+ *   User id.
+ * @param Drupal\Core\Entity\EntityInterface|Drupal\private_message\Entity\PrivateMessageThreadInterface $thread
+ *   The thread entity.
+ */
+function private_message_nodejs_thread_updated_notify($uid, EntityInterface $thread) {
+  // Get last message details.
+  $latest_messages = array_reverse($thread->getMessages());
+  $last_message = reset($latest_messages);
+  $owner = $last_message->getOwner();
+  $you = (int) \Drupal::currentUser()->id();
+  $notify_time = \Drupal::config('private_message.settings')->get('notification_time');
+
+  // Build notification.
+  $notification = [
+    '#theme' => 'pmn_notification',
+    '#body' => $last_message->getMessage(),
+    '#owner' => $owner,
+    '#thread' => $thread,
+  ];
+
+  // Notify that thread is updated.
+  $message = (object) [
+    'data' => (object) [
+      'ownerName' => $owner->getDisplayName(),
+      'ownerId' => $owner->id(),
+      'threadId' => $thread->id(),
+      'isYou' => ((int) $uid === $you),
+      'notifyTime' => (int) $notify_time,
+      'body' => render($notification),
+    ],
+    'channel' => 'nodejs_user_' . $uid,
+    'callback' => 'pmnThreadUpdated',
+  ];
+
+  nodejs_get_nodejs()->enqueueMessage($message);
+}
+
+/**
+ * Implements hook_form_private_message_config_form_alter().
+ */
+function private_message_nodejs_form_private_message_config_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $config = \Drupal::config('private_message.settings');
+
+  $form['pmn'] = [
+    '#type' => 'container',
+    '#weight' => 30,
+    'title' => ['#markup' => '<h3>' . t('NodeJS') . '</h3>'],
+  ];
+
+  $time = $config->get('notification_time');
+  $form['pmn']['notification_time'] = [
+    '#type' => 'number',
+    '#title' => t('Notification time'),
+    '#default_value' => !is_null($time) ? $time : 5,
+    '#min' => 0,
+    '#description' => t(
+      'How long (in seconds) should a notification display for. Note: for
+      notifications to work at all, it requires the jGrowl plugin to be
+      available. Set to 0 to disable notifications'),
+  ];
+
+  $form['#submit'][] = 'private_message_nodejs_form_private_message_config_form_submit';
+}
+
+/**
+ * Submit handler for private message config form.
+ */
+function private_message_nodejs_form_private_message_config_form_submit(&$form, FormStateInterface $form_state) {
+  \Drupal::configFactory()->getEditable('private_message.settings')
+    ->set('notification_time', $form_state->getValue('notification_time'))
+    ->save();
+}
+
+/**
+ * Implements hook_theme().
+ */
+function private_message_nodejs_theme($existing, $type, $theme, $path) {
+  return [
+    'pmn_notification' => [
+      'variables' => [
+        'title' => NULL,
+        'body' => NULL,
+        'snippet' => NULL,
+        'owner' => NULL,
+        'thread' => NULL,
+        'image' => NULL,
+        'thread_id' => NULL,
+        'url' => NULL,
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_preprocess_pmn_notification().
+ */
+function template_preprocess_pmn_notification(&$variables) {
+  // Set the profile image.
+  $config = \Drupal::config('private_message.settings');
+  $user = $variables['owner'];
+
+  // If the user has a profile image.
+  if ($user->hasField('user_picture') && $image = $user->get('user_picture')->first()) {
+    $image_uri = $image->entity->getFileUri();
+
+    if ($image_uri) {
+      $style = $config->get('image_style');
+      $style = !empty($style) ? $style : 'thumbnail';
+      $variables['image'] = ImageStyle::load($style)->buildUrl($image_uri);
+    }
+  }
+
+  // Set the title to be the username.
+  $variables['title'] = $user->getDisplayName();
+
+  // Add trimmed snippet.
+  $variables['snippet'] = Unicode::truncate($variables['body'], 60, FALSE, TRUE);
+
+  // Link to the messenger thread.
+  $variables['url'] = Url::fromUserInput('/messenger#thread-' . $variables['thread']->id())->toString();
+}
