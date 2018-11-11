@@ -8,10 +8,9 @@
         // Tell any listeners, they should poll for updates.
         $(window).trigger('pm:threads:poll', [message.data]);
 
-        // Send a growl notification if not you and lib available.
-        if (message.data.notifyTime > 0 && !message.data.isYou && typeof $.fn.jGrowl === 'function') {
-          $.jGrowl(message.data.body, {life: (message.data.notifyTime * 1000)});
-        }
+        // Send a notification.
+        var notify = new Drupal.pmmn.Notification();
+        notify.showNotification(message.data);
       }
     }
   };

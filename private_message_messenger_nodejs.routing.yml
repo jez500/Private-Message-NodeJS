@@ -1,0 +1,7 @@
+private_message_messenger_nodejs.config:
+  path: '/admin/config/private_message/messenger-nodejs'
+  defaults:
+    _title: 'Private Message Messenger NodeJS Configuration'
+    _form: '\Drupal\private_message_messenger_nodejs\Form\ConfigForm'
+  requirements:
+    _permission: 'administer private message module'

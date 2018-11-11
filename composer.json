@@ -1,5 +1,5 @@
 {
-  "name": "drupal/private_message_nodejs",
+  "name": "drupal/private_message_messenger_nodejs",
   "description": "Instant updates for private messages without polling",
   "type": "drupal-module",
   "license": "GPL-2.0+",
@@ -13,7 +13,7 @@
     }
   ],
   "require": {
-    "drupal/private_message": "1.*",
+    "drupal/private_message": "*",
     "drupal/nodejs": "1.x-dev"
   }
 }

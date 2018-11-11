@@ -1,0 +1,5 @@
+private_message_messenger_nodejs.config:
+  title: 'Messenger NodeJS'
+  description: 'Configuration settings for Private Message Messenger NodeJS'
+  route_name: private_message_messenger_nodejs.config
+  parent: private_message.admin_config
