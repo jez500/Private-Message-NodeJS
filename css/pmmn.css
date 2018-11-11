@@ -1,15 +1,15 @@
 
-.pmn-notification {
+.pmmn-notification {
   overflow: hidden;
 }
 
-.pmn-notification__image {
+.pmmn-notification__image {
   width: 50px;
   float: left;
   margin-right: 8px;
 }
 
-.pmn-notification__image img {
+.pmmn-notification__image img {
   width: 100%;
   height: auto;
   display: block;

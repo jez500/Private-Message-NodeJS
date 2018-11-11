@@ -2,9 +2,10 @@ handler:
   version: 1.0
   css:
     layout:
-      css/pmn.css: {}
+      css/pmmn.css: {}
   js:
-    js/pmn-handler.js: { }
+    js/pmmn-notifications.js: { }
+    js/pmmn-handler.js: { }
   dependencies:
     - core/jquery
     - core/drupal

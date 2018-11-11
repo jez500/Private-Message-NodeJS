@@ -1,10 +1,14 @@
 # Private Message NodeJS
 
-Instant updates and notifications for the [Private Message module](https://www.drupal.org/project/private_message)
+Instant updates and notifications for the [Private Message module messenger](https://github.com/jez500/Private-Message-Messenger)
 module without the need for polling.
 
 This listens for private message thread updates and uses the [drupal nodejs module](https://www.drupal.org/project/nodejs)
 to trigger updates to the UI and provide notifications for members of the changed thread.
+
+**NOTE: This is different to the [Private message nodejs](https://www.drupal.org/project/private_message_nodejs) module.**  
+This module was written to be paired with [Private Message Messenger](https://github.com/jez500/Private-Message-Messenger) 
+and and they both work well together.
 
 ## How it normally works
 
@@ -77,8 +81,10 @@ I also had to update the `backend.host` with the correct url for my drupal site
 should match your `nodejs.config.js` file (only thing I need to change was the host)
 * The status report page `/admin/reports/status` should indicate drupal has found the NodeJS server
 
-**NOTE:** At time of writing this, the "stable" release of `drupal/nodejs` (`v1.1`) was actually quite broken, the
+**NOTE 1:** At time of writing this, the "stable" release of `drupal/nodejs` (`v1.1`) was actually quite broken, the
 `1.x-dev` version is far more robust.
+
+**NOTE 2:** For https support with `drupal/nodejs` you will likely need [this patch](https://www.drupal.org/project/nodejs/issues/2783703).
 
 ### 3. Notifications - Optional, but handy for testing
 

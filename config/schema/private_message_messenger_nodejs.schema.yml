@@ -1,0 +1,10 @@
+private_message_messenger.settings:
+  type: config_object
+  label: 'Global settings for the Private Message Messenger NodeJS module'
+  mapping:
+    notification_type:
+      type: string
+      label: 'How should notifications be displayed.'
+    notification_time:
+      type: integer
+      label: 'How long to display a notification for.'
