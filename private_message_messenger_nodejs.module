@@ -86,7 +86,7 @@ function private_message_messenger_nodejs_thread_updated_notify($uid, EntityInte
  */
 function private_message_messenger_nodejs_theme($existing, $type, $theme, $path) {
   return [
-    'pmn_notification' => [
+    'pmmn_notification' => [
       'variables' => [
         'title' => NULL,
         'body' => NULL,
@@ -136,6 +136,6 @@ function _private_message_messenger_nodejs_parse_notification(array &$variables)
 /**
  * Implements hook_preprocess_pmn_notification().
  */
-function template_preprocess_pmn_notification(&$variables) {
+function template_preprocess_pmmn_notification(&$variables) {
   _private_message_messenger_nodejs_parse_notification($variables);
 }

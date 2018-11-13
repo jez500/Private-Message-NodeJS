@@ -1,6 +1,7 @@
 
 .pmmn-notification {
   overflow: hidden;
+  display: block;
 }
 
 .pmmn-notification__image {
